@@ -1,27 +1,27 @@
-﻿using Syncfusion.DocIO.DLS;
-using Syncfusion.DocIO;
+﻿using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
 
 using (FileStream inputStream = new FileStream(@"../../../Data/Template.docx", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 {
-    //Load the template document as stream
+    //Open an existing Word document
     using (WordDocument document = new WordDocument(inputStream, FormatType.Docx))
     {
-        int fileId = 1;
+        int sectionNumber = 1;
         //Iterate each section from Word document
         foreach (WSection section in document.Sections)
         {
             //Create new Word document
             using (WordDocument newDocument = new WordDocument())
             {
-                //Add cloned section into new Word document
+                //Clone and add section from one Word document to another
                 newDocument.Sections.Add(section.Clone());
-                //Save the Word document to MemoryStream
-                using (FileStream outputStream = new FileStream(@"../../../Section" + fileId + ".docx", FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                //Save the Word document
+                using (FileStream outputStream = new FileStream(@"../../../Section" + sectionNumber + ".docx", FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
                     newDocument.Save(outputStream, FormatType.Docx);
                 }
             }
-            fileId++;
+            sectionNumber++;
         }
     }
 }

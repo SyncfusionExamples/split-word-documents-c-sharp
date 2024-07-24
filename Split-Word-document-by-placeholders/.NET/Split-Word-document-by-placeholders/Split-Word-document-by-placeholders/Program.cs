@@ -2,9 +2,9 @@
 using Syncfusion.DocIO.DLS;
 using System.Text.RegularExpressions;
 
-//Load an existing Word document
 using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 {
+    //Open an existing Word document
     using (WordDocument document = new WordDocument(fileStreamPath, FormatType.Docx))
     {
         //Find all the placeholder text in the Word document
@@ -13,8 +13,10 @@ using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx"
         {
             //Unique ID for each bookmark
             int bkmkId = 1;
-            //Collection to hold the inserted bookmarks
+            //Collection to hold the newly inserted bookmarks
             List<string> bookmarks = new List<string>();
+
+            #region Add bookmark start and end in the place of placeholder text
             //Iterate each text selection
             for (int i = 0; i < textSelections.Length; i++)
             {
@@ -24,6 +26,7 @@ using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx"
                 WParagraph startParagraph = textRange.OwnerParagraph;
                 int index = startParagraph.ChildEntities.IndexOf(textRange);
                 string bookmarkName = "Bookmark_" + bkmkId;
+
                 //Add new bookmark to bookmarks collection
                 bookmarks.Add(bookmarkName);
                 //Create bookmark start
@@ -39,6 +42,7 @@ using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx"
                 //Get the index of the placeholder text
                 WParagraph endParagraph = textRange.OwnerParagraph;
                 index = endParagraph.ChildEntities.IndexOf(textRange);
+
                 //Create bookmark end
                 BookmarkEnd bkmkEnd = new BookmarkEnd(document, bookmarkName);
                 //Insert the bookmark end after the end placeholder
@@ -47,6 +51,9 @@ using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx"
                 //Remove the placeholder text
                 textRange.Text = string.Empty;
             }
+            #endregion
+
+            #region Split document based on newly inserted bookmarks
             BookmarksNavigator bookmarksNavigator = new BookmarksNavigator(document);
             int fileIndex = 1;
             foreach (string bookmark in bookmarks)
@@ -66,6 +73,7 @@ using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx"
                 }
                 fileIndex++;
             }
+            #endregion
         }
     }
 }

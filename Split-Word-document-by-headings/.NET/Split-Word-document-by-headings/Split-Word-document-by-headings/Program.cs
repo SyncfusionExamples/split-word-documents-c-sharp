@@ -3,7 +3,7 @@ using Syncfusion.DocIO.DLS;
 
 using (FileStream inputStream = new FileStream(@"../../../Data/Template.docx", FileMode.Open, FileAccess.Read))
 {
-    //Load the template document as stream
+    //Open an existing Word document
     using (WordDocument document = new WordDocument(inputStream, FormatType.Docx))
     {
         WordDocument newDocument = null;
@@ -12,7 +12,7 @@ using (FileStream inputStream = new FileStream(@"../../../Data/Template.docx", F
         //Iterate each section in the Word document
         foreach (WSection section in document.Sections)
         {
-            //Clone the section and add into new document
+            //Clone the section without items and add into new document
             if (newDocument != null)
                 newSection = AddSection(newDocument, section);
             //Iterate each child entity in the Word document
@@ -55,32 +55,37 @@ using (FileStream inputStream = new FileStream(@"../../../Data/Template.docx", F
         }
     }
 }
+/// <summary>
+/// Clone and add the section without content into new Word document
+/// </summary>
 static WSection AddSection(WordDocument newDocument, WSection section)
 {
-    //Create new session based on original document
+    //Create new section based on original document
     WSection newSection = section.Clone();
+    //Remove body items from section
     newSection.Body.ChildEntities.Clear();
-    //Remove the first page header
+    //Remove headers and footers
     newSection.HeadersFooters.FirstPageHeader.ChildEntities.Clear();
-    //Remove the first page footer
     newSection.HeadersFooters.FirstPageFooter.ChildEntities.Clear();
-    //Remove the odd footer
     newSection.HeadersFooters.OddFooter.ChildEntities.Clear();
-    //Remove the odd header
     newSection.HeadersFooters.OddHeader.ChildEntities.Clear();
-    //Remove the even header
     newSection.HeadersFooters.EvenHeader.ChildEntities.Clear();
-    //Remove the even footer
     newSection.HeadersFooters.EvenFooter.ChildEntities.Clear();
     //Add cloned section into new document
     newDocument.Sections.Add(newSection);
     return newSection;
 }
+/// <summary>
+/// Add item into the section.
+/// </summary>
 static void AddEntity(WSection newSection, Entity entity)
 {
     //Add cloned item into the newly created section
     newSection.Body.ChildEntities.Add(entity.Clone());
 }
+/// <summary>
+/// Save the Word document.
+/// </summary>
 static void SaveWordDocument(WordDocument newDocument, string fileName)
 {
     using (FileStream outputStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))

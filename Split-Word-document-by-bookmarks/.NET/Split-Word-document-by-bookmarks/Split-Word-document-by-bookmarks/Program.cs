@@ -1,13 +1,15 @@
-﻿using Syncfusion.DocIO.DLS;
-using Syncfusion.DocIO;
+﻿using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
 
-//Load an existing Word document
+
 using (FileStream fileStreamPath = new FileStream(@"../../../Data/Template.docx", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 {
+    //Open an existing Word document
     using (WordDocument document = new WordDocument(fileStreamPath, FormatType.Docx))
     {
         //Create the bookmark navigator instance to access the bookmark
         BookmarksNavigator bookmarksNavigator = new BookmarksNavigator(document);
+        //Get all bookmarks in Word document
         BookmarkCollection bookmarkCollection = document.Bookmarks;
 
         //Iterate each bookmark in Word document
